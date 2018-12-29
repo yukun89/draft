@@ -1,0 +1,8 @@
+sig:11 nptrs:7
+line=0||trace_back=./a.out() [0x4008c9]||
+line=1||trace_back=/lib64/libc.so.6(+0x35250) [0x7f5c6146e250]||
+line=2||trace_back=./a.out() [0x400a92]||
+line=3||trace_back=./a.out() [0x400ab0]||
+line=4||trace_back=./a.out() [0x400a24]||
+line=5||trace_back=/lib64/libc.so.6(__libc_start_main+0xf5) [0x7f5c6145ab35]||
+line=6||trace_back=./a.out() [0x4007d9]||
