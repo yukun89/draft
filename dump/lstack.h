@@ -18,6 +18,8 @@ head   tail....................... ...
 data1, data2, data3, dataN, ... dataMax
 
 */
+#ifndef __LSTACK_H__
+#define __LSTACK_H__
 template <class T>
 class Lstack
 {
@@ -50,7 +52,7 @@ template <class T> Lstack<T>::~Lstack() {
 
 template <class T>
 bool Lstack<T>::full() {
-	return (head - tail + max_size) % max_size == max_size - 1;
+	return ((head - tail + max_size) % max_size ) == (max_size - 1);
 }
 
 template <class T>
@@ -90,3 +92,4 @@ template <class  T>  void Lstack<T>::init(int lstack_size) {
     max_size = lstack_size;
     arry = new T[lstack_size];
 }
+#endif

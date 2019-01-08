@@ -3,6 +3,11 @@
 #include <execinfo.h>
 #include <signal.h>
 #include <cstdlib>
+#include <string>
+#include "lstack.h"
+
+
+Lstack<std::string> call_list(10);
 
 void dump_trace(int Signal)
 {
@@ -17,6 +22,12 @@ void dump_trace(int Signal)
         }
         free(buffer_array);
     }
+	/* std::string content; */
+	/* int index = 0; */
+	/* while (call_list.pop(content) ) { */
+	/* 	std::cout << "frame" << index << ":"<< content << std::endl; */
+	/* 	index ++; */
+	/* } */
     exit(1);
 }
 
@@ -39,3 +50,36 @@ int regist_signal_handler()
 }
 
 
+#define DUMP(func, call) \
+	printf("%s: func = %p, called by = %p\n", __FUNCTION__, func, call)
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void __attribute__((no_instrument_function))
+__cyg_profile_func_enter(void *this_func, void *call_site);
+
+void __attribute__((no_instrument_function))
+__cyg_profile_func_exit(void *this_func, void *call_site);
+
+#ifdef __cplusplus
+};
+#endif
+
+void __cyg_profile_func_enter(void *this_func, void *call_site)
+{
+	DUMP(this_func, call_site);
+	char buffer[32] = {0};
+	int len = snprintf(buffer, 20, "%p", call_site);
+	std::string content = std::string(buffer);
+	/* call_list.push(content); */
+	return ;
+}
+
+void __cyg_profile_func_exit(void *this_func, void *call_site)
+{
+	DUMP(this_func, call_site);
+	return ;
+}
