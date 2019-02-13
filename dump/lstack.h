@@ -3,6 +3,9 @@ lstack grows to ==>
 empty: tail = head
 tail(head)
 
+head: the position for the next element.
+tail: the position for the earliest element.
+
 normal:  
 tail....................... head
 data1, data2, data3, dataN, .... dataMax
@@ -17,6 +20,8 @@ full-case2:
 head   tail....................... ...
 data1, data2, data3, dataN, ... dataMax
 
+put:when we put new ele into the stack, we should delete the earliest ele first.
+pop: f
 */
 #ifndef __LSTACK_H__
 #define __LSTACK_H__
@@ -26,20 +31,21 @@ class Lstack
 public:
     Lstack(int);
     ~Lstack();
-    void push(T);
-    bool  pop(T&);
+    void push(T &);
+    void pop();
+    T& top();
 	bool empty();
-	bool full();
     int size();
 
 private:
     void init(int);
+	bool full();
 
 private:
     int head;//the next position to be used
 	int tail;//the first position which has beed used
     int max_size;
-    T* arry;
+    T* data_;
 };
 
 template <class  T>  Lstack<T>::Lstack(int lstack_size) {
@@ -47,7 +53,7 @@ template <class  T>  Lstack<T>::Lstack(int lstack_size) {
 }
 
 template <class T> Lstack<T>::~Lstack() {
-    delete []arry;
+    delete []data_;
 }
 
 template <class T>
@@ -60,22 +66,24 @@ bool Lstack<T>::empty() {
 	return head == tail;
 }
 
-template <class T> void Lstack<T>::push(T t) {
+template <class T> void Lstack<T>::push(T &t) {
 	if (full()) {
 		tail = (tail + 1) % max_size;
 	}
-    arry[head] = t;
+    data_[head] = t;
 	head = (head +1) % max_size;
 }
 
-template <class T> bool Lstack<T>::pop(T& t) {
-    if(empty())
+template <class T> T& Lstack<T>::top() {
+    int index = (head -1 + max_size) % max_size;
+    return data_[index];
+}
+
+template <class T> void Lstack<T>::pop() {
+    if(!empty())
     {
-		return false;
+	    head = (head - 1 + max_size) % max_size;
     }
-	head = (head - 1 ) % max_size;
-    t = arry[head];
-    return true;
 }
 
 template <class T> int Lstack<T>::size() {
@@ -90,6 +98,6 @@ template <class  T>  void Lstack<T>::init(int lstack_size) {
     head = 0;
 	tail = 0;
     max_size = lstack_size;
-    arry = new T[lstack_size];
+    data_ = new T[lstack_size];
 }
 #endif

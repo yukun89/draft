@@ -7,13 +7,17 @@
 #include "lstack.h"
 
 
-Lstack<std::string> call_list(10);
+Lstack<std::string> call_list(40);
 
 void dump_trace(int Signal)
 {
+/* #define SELF_TRACE 1 */
+#ifndef SELF_TRACE
     const int len = 200;
     void* buffer[len];
+    printf("dump_trace\n");
     int nptrs = ::backtrace(buffer, len);
+    printf("backtrace\n");
     char** buffer_array = ::backtrace_symbols(buffer, nptrs);
     printf("sig:%d nptrs:%d\n", Signal, nptrs);
     if (buffer_array) {
@@ -22,26 +26,21 @@ void dump_trace(int Signal)
         }
         free(buffer_array);
     }
-	/* std::string content; */
-	/* int index = 0; */
-	/* while (call_list.pop(content) ) { */
-	/* 	std::cout << "frame" << index << ":"<< content << std::endl; */
-	/* 	index ++; */
-	/* } */
-    exit(1);
+#else
+	std::string content;
+	int index = 0;
+	while (!call_list.empty()) {
+        content = call_list.top();
+        call_list.pop();
+		std::cout << "frame_" << index << ": "<< content << std::endl;
+		index ++;
+	}
+#endif
+    exit(0);
 }
 
 int regist_signal_handler()
 {
-	signal(SIGHUP, SIG_IGN);
-	signal(SIGQUIT, SIG_IGN);
-	signal(SIGPIPE, SIG_IGN);
-	signal(SIGTTOU, SIG_IGN);
-	signal(SIGTTIN, SIG_IGN);
-	signal(SIGCHLD, SIG_IGN);
-	signal(SIGTERM, SIG_IGN);
-
-	// Dump traceback when crash.
 	signal(SIGSEGV, dump_trace); // 11 Core  Invalid memory reference
 	signal(SIGABRT, dump_trace); // 6  Core  Abort signal from abort(3)
 	signal(SIGILL, dump_trace);  // 4  Core  Illegal Instruction
@@ -50,8 +49,8 @@ int regist_signal_handler()
 }
 
 
-#define DUMP(func, call) \
-	printf("%s: func = %p, called by = %p\n", __FUNCTION__, func, call)
+#define DUMP(func, call_site) \
+	printf("%s: func = %p, called at = %p\n", __FUNCTION__, func, call_site)
 
 
 #ifdef __cplusplus
@@ -70,16 +69,16 @@ __cyg_profile_func_exit(void *this_func, void *call_site);
 
 void __cyg_profile_func_enter(void *this_func, void *call_site)
 {
-	DUMP(this_func, call_site);
-	char buffer[32] = {0};
-	int len = snprintf(buffer, 20, "%p", call_site);
+	/* DUMP(this_func, call_site); */
+	char buffer[64] = {0};
+	int len = snprintf(buffer, 60, "%p call %p", this_func, call_site);
 	std::string content = std::string(buffer);
-	/* call_list.push(content); */
+	call_list.push(content);
 	return ;
 }
 
 void __cyg_profile_func_exit(void *this_func, void *call_site)
 {
-	DUMP(this_func, call_site);
+	/* DUMP(this_func, call_site); */
 	return ;
 }
