@@ -1,4 +1,3 @@
-#include "lstack.h"
 #include "dump_trace.h"
 #include <cstdio>
 
@@ -14,6 +13,11 @@ int do_calc(int a, int b)
 	return do_multi(a, b);
 }
 
+int do_test(int a, int b)
+{
+    return a + b;
+}
+
 void fun(int n)
 {
     printf("The %d step begin.\n", n);
@@ -22,7 +26,11 @@ void fun(int n)
         a[i] = i;
     }
     if (n < 20) {
-        fun(n +1);
+        if (n&1) {
+            fun(n +1);
+        } else {
+            fun(n + 3);
+        }
     }
     printf("The %d step end\n", n);
     return ;
@@ -31,6 +39,7 @@ void fun(int n)
 int main()
 {
 	printf("server start\n");
+	printf("do test %d\n", do_test(1, 2));
 	regist_signal_handler();
 	int a = 4, b = 5;
 	/* printf("result: %d\n", do_calc(a, b)); */

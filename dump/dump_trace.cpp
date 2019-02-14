@@ -4,14 +4,13 @@
 #include <signal.h>
 #include <cstdlib>
 #include <string>
-#include "lstack.h"
+#include <stack>
 
 
-Lstack<std::string> call_list(40);
-
+std::stack<std::string> call_list;
 void dump_trace(int Signal)
 {
-/* #define SELF_TRACE 1 */
+#define SELF_TRACE 1
 #ifndef SELF_TRACE
     const int len = 200;
     void* buffer[len];
@@ -29,6 +28,7 @@ void dump_trace(int Signal)
 #else
 	std::string content;
 	int index = 0;
+    printf("sig:%d \n", Signal);
 	while (!call_list.empty()) {
         content = call_list.top();
         call_list.pop();
@@ -80,5 +80,6 @@ void __cyg_profile_func_enter(void *this_func, void *call_site)
 void __cyg_profile_func_exit(void *this_func, void *call_site)
 {
 	/* DUMP(this_func, call_site); */
+    call_list.pop();
 	return ;
 }
