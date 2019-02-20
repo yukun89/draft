@@ -1,6 +1,6 @@
 #include "dump_trace.h"
 #include <cstdio>
-
+//#include <iostream>
 int do_multi(int a, int b)
 {
 	int *p = NULL;
