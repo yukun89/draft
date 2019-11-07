@@ -125,7 +125,7 @@ __cyg_profile_func_exit(void *this_func, void *call_site);
 
 void __cyg_profile_func_enter(void *this_func, void *call_site)
 {
-    DUMP(this_func, call_site);
+    //DUMP(this_func, call_site);
     CallInfo info(this_func, call_site);
     heap_stack.Push(info);
     return ;
@@ -133,7 +133,7 @@ void __cyg_profile_func_enter(void *this_func, void *call_site)
 
 void __cyg_profile_func_exit(void *this_func, void *call_site)
 {
-    DUMP(this_func, call_site);
+    //DUMP(this_func, call_site);
     heap_stack.Pop();
     return ;
 }
